@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from './components/Form/Form'
 import Posts from './components/Posts/Posts'
 import memories from './images/memories.png';
@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { getPosts } from './actions/posts'
 
 const App = () => {
+    const [currentId, setCurrentId] = useState(null);
     const classes = useStyles();
     const dispatch = useDispatch();
     // used to dispatch actions
@@ -25,10 +26,10 @@ const App = () => {
                 <Container>
                     <Grid container justify="space-between" alignItems="stretch" spacing={3}>
                         <Grid item xs={12} sm={7}>
-                            <Posts />
+                            <Posts setCurrentId={setCurrentId} />
                         </Grid>
                         <Grid item xs={12} sm={4}>
-                            <Form />
+                            <Form setCurrentId={setCurrentId} />
                         </Grid>
                     </Grid>
                 </Container>

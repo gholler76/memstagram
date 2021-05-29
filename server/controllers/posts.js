@@ -1,4 +1,5 @@
 // create all handlers for post routes to keep logic out of routes file
+import mongoose from 'mongoose';
 import PostMessage from '../models/postMesage.js'
 
 // async function gets all posts, needs await on the function call
@@ -23,4 +24,15 @@ export const createPost = async (req, res) => {
     catch (error) {
         res.status(409).json({ message: error });
     };
+}
+
+export const updatePost = async (req, res) => {
+    const { id: _id } = req.params;
+    const post = req.body;
+
+    if (!mongoose.types.objectId.isValid(_id)) return res.status(404).send('No post with that id');
+
+    const updatedPost = await PostMessage.findByIdAndUpdate(_id, post, { new: true });
+
+    res.json(updatedPost);
 }
