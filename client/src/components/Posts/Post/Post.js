@@ -6,7 +6,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
 import useStyles from './styles';
 
-const Post = ({ post }) => {
+const Post = ({ post, setCurrentId }) => {
     const classes = useStyles();
     return (
         <Card className={classes.card}>
@@ -20,6 +20,7 @@ const Post = ({ post }) => {
                     <MoreHorizIcon fontSize="default" />
                 </Button>
             </div>
+            <Typography className={classes.title} variant="h5" gutterBottom>{post.title}</Typography>
             <div className={classes.details}>
                 <Typography variant="body2" color="textSecondary">
                     {post.tags.map((tag) => `#${tag}`)}
@@ -27,7 +28,7 @@ const Post = ({ post }) => {
             </div>
             <CardContent>
                 <Typography className={classes.title} varian="h5" gutterBottom>
-                    {post.messages}
+                    {post.message}
                 </Typography>
             </CardContent>
             <CardActions className={classes.cardActions}>

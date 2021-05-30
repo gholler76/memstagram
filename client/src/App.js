@@ -11,6 +11,7 @@ const App = () => {
     const [currentId, setCurrentId] = useState(null);
     const classes = useStyles();
     const dispatch = useDispatch();
+
     // used to dispatch actions
     useEffect(() => {
         dispatch(getPosts());
@@ -29,7 +30,7 @@ const App = () => {
                             <Posts setCurrentId={setCurrentId} />
                         </Grid>
                         <Grid item xs={12} sm={4}>
-                            <Form setCurrentId={setCurrentId} />
+                            <Form currentId={currentId} setCurrentId={setCurrentId} />
                         </Grid>
                     </Grid>
                 </Container>
