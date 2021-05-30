@@ -5,9 +5,13 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
 import useStyles from './styles';
+import { useDispatch } from 'react-redux';
+import { deletePost } from '../../../actions/posts'
 
 const Post = ({ post, setCurrentId }) => {
     const classes = useStyles();
+    const dispatch = useDispatch();
+
     return (
         <Card className={classes.card}>
             <CardMedia className={classes.media} image={post.selectedFile} title={post.title} />
@@ -20,14 +24,14 @@ const Post = ({ post, setCurrentId }) => {
                     <MoreHorizIcon fontSize="default" />
                 </Button>
             </div>
+            <Typography variant="body2" color="textSecondary">
+                {post.tags.map((tag) => `#${tag}`)}
+            </Typography>
             <Typography className={classes.title} variant="h5" gutterBottom>{post.title}</Typography>
             <div className={classes.details}>
-                <Typography variant="body2" color="textSecondary">
-                    {post.tags.map((tag) => `#${tag}`)}
-                </Typography>
             </div>
             <CardContent>
-                <Typography className={classes.title} varian="h5" gutterBottom>
+                <Typography variant="h5" gutterBottom>
                     {post.message}
                 </Typography>
             </CardContent>
@@ -39,7 +43,7 @@ const Post = ({ post, setCurrentId }) => {
                 </Button>
             </CardActions>
             <CardActions className={classes.cardActions}>
-                <Button size="small" color="primary" onClick={() => { }}>
+                <Button size="small" color="primary" onClick={() => dispatch(deletePost(post._id))}>
                     <DeleteIcon fontSize="small" />
                     Delete
                 </Button>
