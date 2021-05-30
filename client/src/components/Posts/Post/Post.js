@@ -31,14 +31,14 @@ const Post = ({ post, setCurrentId }) => {
             <div className={classes.details}>
             </div>
             <CardContent>
-                <Typography variant="h5" gutterBottom>
+                <Typography variant="body2" color="textSecondary" component="p" gutterBottom>
                     {post.message}
                 </Typography>
             </CardContent>
             <CardActions className={classes.cardActions}>
                 <Button size="small" color="primary" onClick={() => dispatch(likePost(post._id))}>
                     <ThumbUpAltIcon fontSize="small" />
-                    Like
+                    &nbsp;Like &nbsp;
                     {post.likeCount}
                 </Button>
             </CardActions>
