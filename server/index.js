@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import postRoutes from './routes/posts.js';
-import userRoutes from './routes/users.js';
+import userRoutes from './routes/user.js';
 
 const app = express();
 dotenv.config();
@@ -15,7 +15,7 @@ app.use( express.urlencoded( { limit: "30mb", extended: true } ) );
 app.use( cors() );
 
 app.use( '/posts', postRoutes );
-app.use( '/user, userRoutes' );
+app.use( '/user', userRoutes );
 // set the mongodb connection and assign a port variable
 const PORT = process.env.PORT;
 
