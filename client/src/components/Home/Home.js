@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grow, Grid, Paper, AppBar, TextField, Button } from '@material-ui/core';
+import { Container, Grow, Grid, Paper, AppBar, TextField, Button, Chip, Icon } from '@material-ui/core';
 import Posts from '../Posts/Posts';
 import Form from '../Form/Form';
 import { useDispatch } from 'react-redux';
-import { getPosts } from '../../actions/posts';
+import { getPosts, getPostsBySearch } from '../../actions/posts';
 import Pagination from '../Pagination';
 import { useHistory, useLocation } from 'react-router-dom';
-import ChipInput from '@material-ui/core/Chip';
 import useStyles from './styles';
 
 function useQuery () {
@@ -21,11 +20,33 @@ const Home = () => {
     const page = query.get( 'page' ) || 1;
     const searchQuery = query.get( 'searchQuery' );
     const classes = useStyles();
+    const [ search, setSearch ] = useState( "" );
+    const [ tags, setTags ] = useState( [] );
 
     // used to dispatch actions
     useEffect( () => {
         dispatch( getPosts() );
     }, [ currentId, dispatch ] );
+
+    const searchPost = () => {
+        if ( search.trim() )
+        {
+            dispatch( getPostsBySearch( { search, tags: tags.join( ',' ) } ) );
+        } else
+        {
+            history.push( '/' );
+        }
+    };
+    const handleKeyPress = ( e ) => {
+        if ( e.keycode === 13 )
+        {
+            searchPost();
+        }
+    };
+
+    const handleAdd = ( tag ) => setTags( [ ...tags, tag ] );
+
+    const handleDelete = ( tagToDelete ) => setTags( tags.filter( ( tag ) => tag !== tagToDelete ) );
 
     return (
         <Grow in>
@@ -41,9 +62,27 @@ const Home = () => {
                                 variant="outlined"
                                 label="Search"
                                 fullWidth
-                                value="TEST"
-                                onChange={ () => { } }
+                                onKeyPress={ handleKeyPress }
+                                value={ search }
+                                onChange={ ( e ) => setSearch( e.target.value ) }
                             />
+                            {/* <TextField
+                                className={ classes.chipInput }
+                                label="Search Tags"
+                                onDelete={ handleDelete }
+                                onAdd={ handleAdd }
+                                value={ tags }
+                                {
+                                ...tags.map( ( tag, idx ) => {
+                                    return (
+                                        <Chip key={ idx }
+                                            className={ classes.chip }
+                                        />
+                                    );
+                                } )
+                                } }
+                            /> */}
+                            <Button onClick={ searchPost } classname={ classes.searchButton } variant="contained" color="primary">Search</Button>
                         </AppBar>
                         <Form currentId={ currentId } setCurrentId={ setCurrentId } />
                         <Paper elevation={ 6 }>
