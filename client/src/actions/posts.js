@@ -1,48 +1,57 @@
-// import everything as an api from the folder, in this case all the posts 
-import * as api from '../api';
+import { FETCH_ALL, FETCH_POST, FETCH_BY_SEARCH, CREATE, UPDATE, DELETE, LIKE, START_LOADING, END_LOADING } from '../constants/actionTypes';
+import * as api from '../api/index.js';
 
-import { FETCH_ALL, DELETE, CREATE, UPDATE, LIKE } from '../constants/actionTypes';
-
-// action creators for functions that will return actions
-// in this case, type is followed by payload, which is the data specified
-// because action is async, thunk is used to call the additional function
-export const getPosts = () => async ( dispatch ) => {
+export const getPost = ( id ) => async ( dispatch ) => {
     try
     {
-        const { data } = await api.fetchPosts();
-        // with thunk, dispatch is the actual return of the action in a function call 
-        dispatch( { type: FETCH_ALL, payload: data } );
-    }
-    catch ( error )
+
+        const { data } = await api.fetchPost( id );
+
+        dispatch( { type: FETCH_POST, payload: { post: data } } );
+    } catch ( error )
     {
         console.log( error );
     }
+};
 
+export const getPosts = ( page ) => async ( dispatch ) => {
+    try
+    {
+        dispatch( { type: START_LOADING } );
+        const { data: { data } } = await api.fetchPosts( page );
+
+        dispatch( { type: FETCH_ALL, payload: data } );
+        dispatch( { type: END_LOADING } );
+    } catch ( error )
+    {
+        console.log( error );
+    }
 };
 
 export const getPostsBySearch = ( searchQuery ) => async ( dispatch ) => {
     try
     {
         const { data: { data } } = await api.fetchPostsBySearch( searchQuery );
-        console.log( data );
+        dispatch( { type: START_LOADING } );
 
-
+        dispatch( { type: FETCH_BY_SEARCH, payload: data } );
     } catch ( error )
     {
         console.log( error );
-
-
     }
 };
 
-export const createPost = ( post ) => async ( dispatch ) => {
+export const createPost = ( post, history ) => async ( dispatch ) => {
     try
     {
         const { data } = await api.createPost( post );
+        dispatch( { type: START_LOADING } );
         dispatch( { type: CREATE, payload: data } );
-    }
-    catch {
-        console.log( 'error' );
+
+        history.push( `/posts/${ data._id }` );
+    } catch ( error )
+    {
+        console.log( error );
     }
 };
 
@@ -52,38 +61,34 @@ export const updatePost = ( id, post ) => async ( dispatch ) => {
         const { data } = await api.updatePost( id, post );
 
         dispatch( { type: UPDATE, payload: data } );
-    }
-    catch ( error )
+    } catch ( error )
     {
         console.log( error );
+    }
+};
 
+export const likePost = ( id ) => async ( dispatch ) => {
+    const user = JSON.parse( localStorage.getItem( 'profile' ) );
+
+    try
+    {
+        const { data } = await api.likePost( id, user?.token );
+
+        dispatch( { type: LIKE, payload: data } );
+    } catch ( error )
+    {
+        console.log( error );
     }
 };
 
 export const deletePost = ( id ) => async ( dispatch ) => {
     try
     {
-        await api.deletePost( id );
+        await await api.deletePost( id );
 
         dispatch( { type: DELETE, payload: id } );
-    }
-    catch ( error )
+    } catch ( error )
     {
         console.log( error );
-
-    }
-};
-
-export const likePost = ( id ) => async ( dispatch ) => {
-    try
-    {
-        const { data } = await api.likePost( id );
-
-        dispatch( { type: LIKE, payload: data } );
-    }
-    catch ( error )
-    {
-        console.log( error );
-
     }
 };
