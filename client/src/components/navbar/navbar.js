@@ -4,7 +4,7 @@ import useStyles from './styles';
 import memories from '../../images/memories.png';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { LOGOUT } from '../../constants/actionTypes';
+import * as actionType from '../../constants/actionTypes';
 import decode from 'jwt-decode';
 
 
@@ -16,9 +16,9 @@ const Navbar = () => {
     const location = useLocation();
 
     const logout = () => {
-        dispatch( { type: LOGOUT } );
+        dispatch( { type: actionType.LOGOUT } );
 
-        history.push( '/' );
+        history.push( '/auth' );
 
         setUser( null );
     };

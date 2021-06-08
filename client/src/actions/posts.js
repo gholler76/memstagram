@@ -1,9 +1,10 @@
-import { FETCH_ALL, FETCH_POST, FETCH_BY_SEARCH, CREATE, UPDATE, DELETE, LIKE, START_LOADING, END_LOADING } from '../constants/actionTypes';
+import { START_LOADING, END_LOADING, FETCH_ALL, FETCH_POST, FETCH_BY_SEARCH, CREATE, UPDATE, DELETE, LIKE } from '../constants/actionTypes';
 import * as api from '../api/index.js';
 
 export const getPost = ( id ) => async ( dispatch ) => {
     try
     {
+        dispatch( { type: START_LOADING } );
 
         const { data } = await api.fetchPost( id );
 
@@ -18,9 +19,9 @@ export const getPosts = ( page ) => async ( dispatch ) => {
     try
     {
         dispatch( { type: START_LOADING } );
-        const { data: { data } } = await api.fetchPosts( page );
+        const { data: { data, currentPage, numberOfPages } } = await api.fetchPosts( page );
 
-        dispatch( { type: FETCH_ALL, payload: data } );
+        dispatch( { type: FETCH_ALL, payload: { data, currentPage, numberOfPages } } );
         dispatch( { type: END_LOADING } );
     } catch ( error )
     {
@@ -31,10 +32,11 @@ export const getPosts = ( page ) => async ( dispatch ) => {
 export const getPostsBySearch = ( searchQuery ) => async ( dispatch ) => {
     try
     {
-        const { data: { data } } = await api.fetchPostsBySearch( searchQuery );
         dispatch( { type: START_LOADING } );
+        const { data: { data } } = await api.fetchPostsBySearch( searchQuery );
 
-        dispatch( { type: FETCH_BY_SEARCH, payload: data } );
+        dispatch( { type: FETCH_BY_SEARCH, payload: { data } } );
+        dispatch( { type: END_LOADING } );
     } catch ( error )
     {
         console.log( error );
@@ -44,8 +46,9 @@ export const getPostsBySearch = ( searchQuery ) => async ( dispatch ) => {
 export const createPost = ( post, history ) => async ( dispatch ) => {
     try
     {
-        const { data } = await api.createPost( post );
         dispatch( { type: START_LOADING } );
+        const { data } = await api.createPost( post );
+
         dispatch( { type: CREATE, payload: data } );
 
         history.push( `/posts/${ data._id }` );

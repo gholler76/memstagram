@@ -1,20 +1,38 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import PostMessage from '../models/postMesage.js';
+
+import PostMessage from '../models/postMessage.js';
 
 const router = express.Router();
 
 export const getPosts = async ( req, res ) => {
     const { page } = req.query;
+
     try
     {
         const LIMIT = 8;
-        const startIndex = ( Number( page ) - 1 ) * LIMIT; // get start index of every page
+        const startIndex = ( Number( page ) - 1 ) * LIMIT; // get the starting index of every page
+
         const total = await PostMessage.countDocuments( {} );
+        const posts = await PostMessage.find().sort( { _id: -1 } ).limit( LIMIT ).skip( startIndex );
 
-        const posts = await PostMessage.find().sort( { _id: -1 } ).limit( LIMIT ).skip( startIndex ); //sets limit for how many posts to show on page
+        res.json( { data: posts, currentPage: Number( page ), numberOfPages: Math.ceil( total / LIMIT ) } );
+    } catch ( error )
+    {
+        res.status( 404 ).json( { message: error.message } );
+    }
+};
 
-        res.status( 200 ).json( { data: posts, currentPage: Number( page ), numberOfPages: Math.ceil( total / LIMIT ) } );
+export const getPostsBySearch = async ( req, res ) => {
+    const { searchQuery, tags } = req.query;
+
+    try
+    {
+        const title = new RegExp( searchQuery, "i" );
+
+        const posts = await PostMessage.find( { $or: [ { title }, { tags: { $in: tags.split( ',' ) } } ] } );
+
+        res.json( { data: posts } );
     } catch ( error )
     {
         res.status( 404 ).json( { message: error.message } );
@@ -29,21 +47,6 @@ export const getPost = async ( req, res ) => {
         const post = await PostMessage.findById( id );
 
         res.status( 200 ).json( post );
-    } catch ( error )
-    {
-        res.status( 404 ).json( { message: error.message } );
-    }
-};
-
-export const getPostsBySearch = async ( req, res ) => {
-    const { searchQuery, tags } = req.query;
-    try
-    {
-        const title = new RegExp( searchQuery, 'i' );
-        // find the title that matches one of the two criteria, title or tags
-        const posts = await PostMessage.find( { $or: [ { title }, { tags: { $in: tags.split( '.' ) } } ] } );
-        res.json( { data: posts } );
-
     } catch ( error )
     {
         res.status( 404 ).json( { message: error.message } );
@@ -113,6 +116,7 @@ export const likePost = async ( req, res ) => {
     const updatedPost = await PostMessage.findByIdAndUpdate( id, post, { new: true } );
     res.status( 200 ).json( updatedPost );
 };
+
 
 
 export default router;
