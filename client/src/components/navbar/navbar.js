@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { AppBar, Typography, Toolbar, Avatar, Button } from '@material-ui/core';
-import { Link, useHistory, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import {AppBar, Typography, Toolbar, Avatar, Button} from '@material-ui/core';
+import {Link, useHistory, useLocation} from 'react-router-dom';
+import {useDispatch} from 'react-redux';
 import decode from 'jwt-decode';
 
 import memoriesLogo from '../../images/memoriesLogo.png';
@@ -17,7 +17,7 @@ const Navbar = () => {
   const classes = useStyles();
 
   const logout = () => {
-    dispatch({ type: actionType.LOGOUT });
+    dispatch({type: actionType.LOGOUT});
 
     history.push('/auth');
 
